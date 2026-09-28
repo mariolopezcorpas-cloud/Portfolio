@@ -161,6 +161,18 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "personal-portfolio",
+    title: "Personal Portfolio — This Website",
+    description:
+      "This dark, futuristic developer portfolio — built with Next.js, Tailwind and Motion, showcasing my skills, experience and projects.",
+    longDescription:
+      "The site you're browsing right now. A modern, animated portfolio built with Next.js App Router, Tailwind CSS and Motion, featuring reveal-on-scroll sections, a typed hero, an animated skills grid, an experience timeline and a working contact form.",
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Motion"],
+    github: "https://github.com/mariolopezcorpas-cloud/Portfolio",
+    featured: true,
+    status: "Completed",
+  },
+  {
     slug: "villar-practicas",
     title: "Centre Villar — Booking Platform",
     description:
