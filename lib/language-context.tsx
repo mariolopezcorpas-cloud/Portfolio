@@ -9,6 +9,8 @@ type LanguageContextValue = {
   setLanguage: (language: Language) => void
 }
 
+//cambios nuevos
+
 const LanguageContext = createContext<LanguageContextValue | null>(null)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
