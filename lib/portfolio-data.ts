@@ -13,6 +13,7 @@ export const personal = {
   email: "mariolopezcorpas@gmail.com",
   phone: "+34 662 91 11 39",
   github: "https://github.com/mlopezdaw2n25",
+  linkedin: "https://www.linkedin.com/in/mario-lopez-816b37384/",
   cvUrl: "/cv/Mario-Lopez-Corpas-CV.pdf",
   bio:
     "Higher Technician in Web Application Development (DAW) with a genuine passion for technology. I'm committed, punctual and a perfectionist with every line of code and every system I manage. I love learning constantly to keep climbing the ladder in this profession — and I bring natural leadership, strong teamwork and a positive attitude that keeps momentum going day to day.",

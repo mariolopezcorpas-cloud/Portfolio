@@ -3,8 +3,9 @@
 import { ArrowRight, Download } from "lucide-react"
 import { motion } from "motion/react"
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { GithubIcon } from "@/components/portfolio/icons"
+import { GithubIcon, LinkedinIcon } from "@/components/portfolio/icons"
 import { useLanguage } from "@/lib/language-context"
 import { getPortfolioContent } from "@/lib/translations"
 
@@ -47,6 +48,7 @@ function TypedRoles({ roles }: { roles: string[] }) {
 
 export function Hero() {
   const { language } = useLanguage()
+  const [hasPortrait, setHasPortrait] = useState(true)
   const content = getPortfolioContent(language)
   const { personal, stats, hero } = content
 
@@ -127,70 +129,65 @@ export function Hero() {
               >
                 <GithubIcon className="size-5" />
               </a>
+              <a
+                href={personal.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={language === "en" ? "LinkedIn profile" : "Perfil de LinkedIn"}
+                className="flex size-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan"
+              >
+                <LinkedinIcon className="size-5" />
+              </a>
             </div>
           </motion.div>
 
-          <motion.dl
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-14 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 sm:grid-cols-4"
-          >
-            {stats.map((stat) => (
-              <div key={stat.label}>
-                <dd className="font-heading text-2xl font-semibold text-foreground">
-                  {stat.value}
-                </dd>
-                <dt className="mt-1 text-xs text-muted-foreground">
-                  {stat.label}
-                </dt>
-              </div>
-            ))}
-          </motion.dl>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="relative mx-auto hidden aspect-square w-full max-w-sm items-center justify-center lg:flex"
+          className="group relative mx-auto w-36 overflow-hidden rounded-2xl border border-border/80 bg-card/60 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-neon-cyan/70 hover:shadow-[0_0_32px_-8px_var(--neon-cyan)] sm:w-44 lg:w-full lg:max-w-[18rem]"
         >
-          <div className="absolute inset-0 animate-float-slow rounded-[2rem] border border-neon-cyan/20 bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-violet/10 glow-cyan" />
-          <div className="relative flex h-[85%] w-[85%] flex-col justify-between rounded-2xl border border-border/80 bg-card/60 p-6 font-mono text-xs backdrop-blur-sm">
-            <div className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-destructive/70" />
-              <span className="size-2.5 rounded-full bg-amber-500/70" />
-              <span className="size-2.5 rounded-full bg-emerald-500/70" />
+          {hasPortrait ? (
+            <Image
+              src="/WhatsApp%20Image%202026-09-30%20at%2022.45.58.jpeg"
+              alt={personal.name}
+              width={768}
+              height={1024}
+              priority
+              sizes="(min-width: 1024px) 288px, (min-width: 640px) 176px, 144px"
+              onError={() => setHasPortrait(false)}
+              className="aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div
+              aria-label={personal.name}
+              role="img"
+              className="flex aspect-[3/4] w-full items-center justify-center bg-gradient-to-br from-neon-cyan/15 via-card to-neon-violet/15 font-heading text-5xl font-semibold text-neon-cyan"
+            >
+              ML
             </div>
-            <pre className="mt-4 whitespace-pre-wrap leading-relaxed text-muted-foreground">
-              <span className="text-neon-violet">class</span>{" "}
-              <span className="text-neon-cyan">Developer</span> {"{"}
-              {"\n  "}
-              <span className="text-neon-violet">public</span> $name ={" "}
-              <span className="text-amber-300">
-                &apos;Mario López&apos;
-              </span>
-              ;
-              {"\n  "}
-              <span className="text-neon-violet">public</span> $stack ={" "}
-              [<span className="text-amber-300">&apos;PHP&apos;</span>,{" "}
-              <span className="text-amber-300">&apos;Laravel&apos;</span>];
-              {"\n  "}
-              <span className="text-neon-violet">public function</span>{" "}
-              <span className="text-neon-cyan">ship</span>() {"{"}
-              {"\n    "}
-              <span className="text-neon-violet">return</span>{" "}
-              <span className="text-amber-300">&apos;🚀 shipped&apos;</span>;
-              {"\n  "}
-              {"}"}
-              {"\n"}
-              {"}"}
-            </pre>
-            <div className="text-muted-foreground/70">
-              status: <span className="text-emerald-400">online</span>
-            </div>
-          </div>
+          )}
         </motion.div>
+
+        <motion.dl
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-0 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 sm:grid-cols-4 lg:col-span-2"
+        >
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <dd className="font-heading text-2xl font-semibold text-foreground">
+                {stat.value}
+              </dd>
+              <dt className="mt-1 text-xs text-muted-foreground">
+                {stat.label}
+              </dt>
+            </div>
+          ))}
+        </motion.dl>
       </div>
     </section>
   )
