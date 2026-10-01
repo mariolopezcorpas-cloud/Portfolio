@@ -138,6 +138,14 @@ export function Hero() {
               >
                 <LinkedinIcon className="size-5" />
               </a>
+              <a
+                href="/mi%20carta%20de%20presentacion.pdf"
+                download="mi carta de presentacion.pdf"
+                aria-label={language === "en" ? "Download cover letter" : "Descargar carta de presentación"}
+                className="flex size-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan"
+              >
+                <Download className="size-5" />
+              </a>
             </div>
           </motion.div>
 
