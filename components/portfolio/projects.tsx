@@ -1,9 +1,17 @@
 "use client"
 
 import Image from "next/image"
-import { useRef, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { ExternalLink } from "lucide-react"
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react"
+import {
+  motion,
+  useReducedMotion,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "motion/react"
 import { GithubIcon } from "@/components/portfolio/icons"
 import { Reveal } from "@/components/portfolio/reveal"
 import { SectionHeading } from "@/components/portfolio/section-heading"
@@ -12,46 +20,56 @@ import { useLanguage } from "@/lib/language-context"
 import { getPortfolioContent } from "@/lib/translations"
 import styles from "./projects.module.css"
 
-type ProjectTrajectory = { x: number[]; y: number[]; rotate: number[] }
-
-const projectTrajectories: ProjectTrajectory[] = [
-  { x: [7, -2, -8], y: [-12, 2, 12], rotate: [1.2, -0.4, -1.4] },
-  { x: [-8, 2, 8], y: [-10, 1, 11], rotate: [-1.1, 0.5, 1.4] },
-  { x: [6, -4, -5], y: [-11, -1, 12], rotate: [1.4, -0.8, -1.1] },
-  { x: [-6, 4, 7], y: [-12, 3, 11], rotate: [-1.4, 0.9, 1.2] },
-]
-
-function ScrollProject({ children, index }: { children: ReactNode; index: number }) {
-  const targetRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start end", "end start"],
-  })
-  const easedProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 22,
-    mass: 0.45,
-  })
-  const movement = projectTrajectories[index] ?? projectTrajectories[0]
+function ProjectSlide({
+  children,
+  index,
+  activeIndex,
+  stageWidth,
+}: {
+  children: ReactNode
+  index: number
+  activeIndex: MotionValue<number>
+  stageWidth: number
+}) {
   const reduceMotion = useReducedMotion()
-  const zero = [0, 0, 0]
-  const x = useTransform(easedProgress, [0, 0.5, 1], reduceMotion ? zero : movement.x)
-  const y = useTransform(easedProgress, [0, 0.5, 1], reduceMotion ? zero : movement.y)
-  const rotate = useTransform(
-    easedProgress,
-    [0, 0.5, 1],
-    reduceMotion ? zero : movement.rotate,
+  const distance = useTransform(activeIndex, (value) => index - value)
+  const spacing = Math.max(280, Math.min(stageWidth * 0.74, 820))
+  const x = useTransform(distance, (value) => value * spacing)
+  const y = useTransform(distance, (value) =>
+    reduceMotion ? 0 : Math.sin(value * Math.PI * 0.5) * 14,
+  )
+  const rotate = useTransform(distance, (value) =>
+    reduceMotion ? 0 : Math.max(-1, Math.min(1, value)) * 5.5,
+  )
+  const scale = useTransform(distance, (value) => Math.max(0.64, 1 - Math.abs(value) * 0.2))
+  const opacity = useTransform(distance, (value) => Math.max(0.22, 1 - Math.abs(value) * 0.58))
+  const filter = useTransform(distance, (value) =>
+    `blur(${reduceMotion ? 0 : Math.min(8, Math.abs(value) * 4)}px)`,
+  )
+  const zIndex = useTransform(distance, (value) => 20 - Math.round(Math.abs(value) * 2))
+  const pointerEvents = useTransform(distance, (value) =>
+    Math.abs(value) < 0.5 ? "auto" : "none",
   )
 
   return (
     <motion.div
-      ref={targetRef}
-      className={styles.parallax}
-      style={{ x, y, rotate }}
+      className={styles.slide}
+      style={{ x, y, rotate, scale, opacity, filter, zIndex, pointerEvents }}
     >
       {children}
     </motion.div>
   )
+}
+
+function ProgressMark({ index, activeIndex }: { index: number; activeIndex: MotionValue<number> }) {
+  const opacity = useTransform(activeIndex, (value) =>
+    Math.max(0.28, 1 - Math.abs(index - value) * 0.7),
+  )
+  const scaleX = useTransform(activeIndex, (value) =>
+    Math.abs(index - value) < 0.5 ? 1.7 : 1,
+  )
+
+  return <motion.span className={styles.progressMark} style={{ opacity, scaleX }} />
 }
 
 const projectImages: Record<string, string[]> = {
@@ -130,20 +148,74 @@ function ProjectArtwork({ slug, title }: { slug: string; title: string }) {
 export function Projects() {
   const { language } = useLanguage()
   const content = getPortfolioContent(language)
+  const scrollTrackRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const [stageWidth, setStageWidth] = useState(0)
+  const [frameActive, setFrameActive] = useState(false)
+  const { scrollYProgress } = useScroll({
+    target: scrollTrackRef,
+    offset: ["start end", "end start"],
+  })
+  const rawActiveIndex = useTransform(
+    scrollYProgress,
+    [0, 0.04, 0.25, 0.5, 0.75, 1],
+    [0, 0, 1, 2, 3, 3],
+  )
+  const frameOpacity = useTransform(scrollYProgress, [0, 0.04, 0.99, 1], [0, 1, 1, 0])
+  const framePointerEvents = useTransform(
+    scrollYProgress,
+    [0, 0.01, 0.999, 1],
+    ["none", "auto", "auto", "none"],
+  )
+  const activeIndex = useSpring(rawActiveIndex, {
+    stiffness: 82,
+    damping: 24,
+    mass: 0.55,
+  })
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const nextFrameActive = progress > 0 && progress < 1
+    setFrameActive((current) => current === nextFrameActive ? current : nextFrameActive)
+  })
+
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+
+    const observer = new ResizeObserver(([entry]) => {
+      setStageWidth(entry.contentRect.width)
+    })
+    observer.observe(stage)
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <section id="projects" className="relative py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <SectionHeading
-          index={content.projectsCopy.index}
-          title={content.projectsCopy.title}
-          subtitle={content.projectsCopy.subtitle}
-        />
+    <section id="projects" className={styles.section}>
+      <div ref={scrollTrackRef} className={styles.scrollTrack}>
+        <motion.div
+          className={styles.stickyFrame}
+          style={{ opacity: frameOpacity, pointerEvents: framePointerEvents }}
+          aria-hidden={!frameActive}
+          inert={!frameActive}
+        >
+          <div className={styles.frameContent}>
+            <div className={styles.heading}>
+              <SectionHeading
+                index={content.projectsCopy.index}
+                title={content.projectsCopy.title}
+                subtitle={content.projectsCopy.subtitle}
+              />
+            </div>
 
-        <div className={`${styles.grid} mt-12 grid gap-6 md:grid-cols-2`}>
-          {content.projects.map((project, i) => (
-            <Reveal key={project.slug} delay={i * 0.08} className={styles.reveal}>
-              <ScrollProject index={i}>
+            <div ref={stageRef} className={styles.stage}>
+              {content.projects.map((project, i) => (
+                <ProjectSlide
+                  key={project.slug}
+                  index={i}
+                  activeIndex={activeIndex}
+                  stageWidth={stageWidth}
+                >
               <article className={`${styles.card} group flex h-full flex-col rounded-2xl border border-border/70 bg-card/40 p-6`}>
                 <ProjectArtwork slug={project.slug} title={project.title} />
                 <div className="flex items-center justify-between">
@@ -216,13 +288,22 @@ export function Projects() {
                   </Button>
                 </div>
               </article>
-              </ScrollProject>
-            </Reveal>
-          ))}
-        </div>
+                </ProjectSlide>
+              ))}
+            </div>
 
+            <div className={styles.progress} aria-hidden="true">
+              {content.projects.map((project, index) => (
+                <ProgressMark key={project.slug} index={index} activeIndex={activeIndex} />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6">
         <Reveal delay={0.15}>
-          <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/70 p-8 text-center">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/70 p-8 text-center">
             <p className="text-sm text-muted-foreground">
               {content.projectsCopy.more}
             </p>
