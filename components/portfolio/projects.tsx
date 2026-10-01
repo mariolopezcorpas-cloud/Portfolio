@@ -1,8 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useRef } from "react"
+import { useRef, type ReactNode } from "react"
 import { ExternalLink } from "lucide-react"
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react"
 import { GithubIcon } from "@/components/portfolio/icons"
 import { Reveal } from "@/components/portfolio/reveal"
 import { SectionHeading } from "@/components/portfolio/section-heading"
@@ -10,6 +11,48 @@ import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/lib/language-context"
 import { getPortfolioContent } from "@/lib/translations"
 import styles from "./projects.module.css"
+
+type ProjectTrajectory = { x: number[]; y: number[]; rotate: number[] }
+
+const projectTrajectories: ProjectTrajectory[] = [
+  { x: [7, -2, -8], y: [-12, 2, 12], rotate: [1.2, -0.4, -1.4] },
+  { x: [-8, 2, 8], y: [-10, 1, 11], rotate: [-1.1, 0.5, 1.4] },
+  { x: [6, -4, -5], y: [-11, -1, 12], rotate: [1.4, -0.8, -1.1] },
+  { x: [-6, 4, 7], y: [-12, 3, 11], rotate: [-1.4, 0.9, 1.2] },
+]
+
+function ScrollProject({ children, index }: { children: ReactNode; index: number }) {
+  const targetRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start end", "end start"],
+  })
+  const easedProgress = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 22,
+    mass: 0.45,
+  })
+  const movement = projectTrajectories[index] ?? projectTrajectories[0]
+  const reduceMotion = useReducedMotion()
+  const zero = [0, 0, 0]
+  const x = useTransform(easedProgress, [0, 0.5, 1], reduceMotion ? zero : movement.x)
+  const y = useTransform(easedProgress, [0, 0.5, 1], reduceMotion ? zero : movement.y)
+  const rotate = useTransform(
+    easedProgress,
+    [0, 0.5, 1],
+    reduceMotion ? zero : movement.rotate,
+  )
+
+  return (
+    <motion.div
+      ref={targetRef}
+      className={styles.parallax}
+      style={{ x, y, rotate }}
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 const projectImages: Record<string, string[]> = {
   "personal-portfolio": ["/portfolio1.PNG"],
@@ -87,50 +130,6 @@ function ProjectArtwork({ slug, title }: { slug: string; title: string }) {
 export function Projects() {
   const { language } = useLanguage()
   const content = getPortfolioContent(language)
-  const parallaxRefs = useRef<(HTMLDivElement | null)[]>([])
-
-  useEffect(() => {
-    const elements = parallaxRefs.current.filter((element): element is HTMLDivElement => element !== null)
-    const factors = [0.75, 0.95, 0.82, 1.1]
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    let frame = 0
-
-    const update = () => {
-      frame = 0
-      let settling = false
-
-      elements.forEach((element, index) => {
-        const bounds = element.getBoundingClientRect()
-        const distance = window.innerHeight / 2 - (bounds.top + bounds.height / 2)
-        const target = reducedMotion.matches
-          ? 0
-          : Math.max(-13, Math.min(13, Math.atan(distance / 700) * 9 * factors[index]))
-        const current = Number(element.dataset.parallaxY ?? 0)
-        const next = current + (target - current) * 0.18
-
-        element.dataset.parallaxY = String(Math.abs(target - next) < 0.15 ? target : next)
-        element.style.setProperty("--project-parallax-y", `${element.dataset.parallaxY}px`)
-
-        if (Math.abs(target - next) >= 0.15) settling = true
-      })
-
-      if (settling) frame = window.requestAnimationFrame(update)
-    }
-
-    const scheduleUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update)
-    }
-
-    window.addEventListener("scroll", scheduleUpdate, { passive: true })
-    window.addEventListener("resize", scheduleUpdate)
-    scheduleUpdate()
-
-    return () => {
-      window.removeEventListener("scroll", scheduleUpdate)
-      window.removeEventListener("resize", scheduleUpdate)
-      if (frame) window.cancelAnimationFrame(frame)
-    }
-  }, [])
 
   return (
     <section id="projects" className="relative py-28">
@@ -144,10 +143,7 @@ export function Projects() {
         <div className={`${styles.grid} mt-12 grid gap-6 md:grid-cols-2`}>
           {content.projects.map((project, i) => (
             <Reveal key={project.slug} delay={i * 0.08} className={styles.reveal}>
-              <div
-                ref={(element) => { parallaxRefs.current[i] = element }}
-                className={styles.parallax}
-              >
+              <ScrollProject index={i}>
               <article className={`${styles.card} group flex h-full flex-col rounded-2xl border border-border/70 bg-card/40 p-6`}>
                 <ProjectArtwork slug={project.slug} title={project.title} />
                 <div className="flex items-center justify-between">
@@ -220,7 +216,7 @@ export function Projects() {
                   </Button>
                 </div>
               </article>
-              </div>
+              </ScrollProject>
             </Reveal>
           ))}
         </div>
