@@ -158,14 +158,8 @@ export function Projects() {
   })
   const rawActiveIndex = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.25, 0.5, 0.75, 1],
-    [0, 0, 1, 2, 3, 3],
-  )
-  const frameOpacity = useTransform(scrollYProgress, [0, 0.04, 0.99, 1], [0, 1, 1, 0])
-  const framePointerEvents = useTransform(
-    scrollYProgress,
-    [0, 0.01, 0.999, 1],
-    ["none", "auto", "auto", "none"],
+    [0, 0.2, 0.24, 0.32, 0.36, 0.535, 0.71, 0.8, 1],
+    [0, 0, 0, 1, 1, 2, 3, 3, 3],
   )
   const activeIndex = useSpring(rawActiveIndex, {
     stiffness: 82,
@@ -191,11 +185,11 @@ export function Projects() {
   }, [])
 
   return (
-    <section id="projects" className={styles.section}>
+    <section className={styles.section}>
       <div ref={scrollTrackRef} className={styles.scrollTrack}>
+        <span id="projects" className={styles.anchor} aria-hidden="true" />
         <motion.div
           className={styles.stickyFrame}
-          style={{ opacity: frameOpacity, pointerEvents: framePointerEvents }}
           aria-hidden={!frameActive}
           inert={!frameActive}
         >

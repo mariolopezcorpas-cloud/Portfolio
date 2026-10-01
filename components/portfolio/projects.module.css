@@ -1,25 +1,36 @@
+:global(main:has(#projects)) {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
 .section {
   position: relative;
 }
 
 .scrollTrack {
   position: relative;
-  height: 300vh;
-  height: 300svh;
+  height: 400vh;
+  height: 400svh;
+}
+
+.anchor {
+  position: absolute;
+  top: 60vh;
+  top: 60svh;
+  left: 0;
+  width: 1px;
+  height: 1px;
 }
 
 .stickyFrame {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  z-index: 30;
   display: flex;
   width: 100%;
   height: 100vh;
   height: 100svh;
   align-items: center;
   overflow: hidden;
-  background: color-mix(in oklch, var(--background) 94%, transparent);
 }
 
 .frameContent {
