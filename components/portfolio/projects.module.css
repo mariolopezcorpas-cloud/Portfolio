@@ -1,0 +1,375 @@
+.grid {
+  align-items: stretch;
+}
+
+.reveal,
+.parallax {
+  height: 100%;
+}
+
+.parallax {
+  transform: translate3d(0, var(--project-parallax-y, 0px), 0);
+  will-change: transform;
+}
+
+.card {
+  position: relative;
+  gap: 0;
+  min-width: 0;
+  border-color: color-mix(in oklch, var(--foreground) 13%, transparent);
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  box-shadow: 0 16px 44px -32px color-mix(in oklch, var(--foreground) 35%, transparent);
+  transition: border-color 240ms ease, box-shadow 240ms ease, background 240ms ease;
+}
+
+.card:hover {
+  border-color: color-mix(in oklch, var(--project-accent, var(--neon-cyan)) 42%, transparent);
+  background: color-mix(in oklch, var(--card) 96%, transparent);
+  box-shadow: 0 22px 52px -34px color-mix(in oklch, var(--project-accent, var(--neon-cyan)) 35%, transparent);
+}
+
+.artwork {
+  --project-accent: #7aa8ff;
+  position: relative;
+  isolation: isolate;
+  height: 232px;
+  flex: none;
+  margin: -0.35rem -0.35rem 1.35rem;
+  padding: 12px;
+  overflow: visible;
+  border: 1px solid color-mix(in oklch, var(--project-accent) 22%, var(--border));
+  border-radius: 12px;
+  background: #111820;
+  color: #dce5ee;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 4%);
+}
+
+.portfolioArtwork {
+  --project-accent: #52c9b4;
+  background: linear-gradient(145deg, #14221f, #111820 62%);
+}
+
+.villarArtwork {
+  --project-accent: #83aaff;
+  background: linear-gradient(145deg, #17202d, #111820 68%);
+}
+
+.laravelArtwork {
+  --project-accent: #eaa36e;
+  background: linear-gradient(145deg, #29201b, #111820 68%);
+}
+
+.codeArtwork {
+  --project-accent: #a8c980;
+  padding: 0;
+  overflow: hidden;
+  background: #111713;
+}
+
+.windowBar,
+.editorBar {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  gap: 10px;
+  color: #93a1ae;
+}
+
+.windowDots {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+}
+
+.windowDots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #52616d;
+}
+
+.windowDots i:first-child {
+  background: #dc806f;
+}
+
+.windowDots i:nth-child(2) {
+  background: #d7b66d;
+}
+
+.windowDots i:last-child {
+  background: #79b889;
+}
+
+.windowLanguage {
+  margin-left: auto;
+  color: color-mix(in oklch, var(--project-accent) 88%, white);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
+.capture {
+  position: relative;
+}
+
+.singleCapture {
+  height: calc(100% - 36px);
+  margin-top: 9px;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 7px;
+  box-shadow: 0 12px 24px -17px rgb(0 0 0 / 85%);
+}
+
+.singleCapture img,
+.layer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.singleCapture img {
+  transition: transform 300ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 300ms ease;
+}
+
+.layeredCaptures {
+  position: absolute;
+  inset: 46px 14px 14px;
+}
+
+.layer {
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 7px;
+  background: #202a33;
+  box-shadow: 0 13px 25px -12px rgb(0 0 0 / 88%);
+  transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 320ms ease;
+}
+
+.backLayer {
+  top: 0;
+  right: 2%;
+  width: 63%;
+  height: 75%;
+  transform: rotate(4deg);
+}
+
+.frontLayer {
+  bottom: 0;
+  left: 2%;
+  z-index: 1;
+  width: 67%;
+  height: 83%;
+  transform: rotate(-3deg);
+}
+
+.villarArtwork .backLayer {
+  transform: rotate(4deg) translateY(2px);
+}
+
+.villarArtwork .frontLayer {
+  transform: rotate(-3deg) translateY(-1px);
+}
+
+.laravelArtwork .backLayer {
+  right: 0;
+  width: 60%;
+  height: 78%;
+  transform: rotate(-4deg);
+}
+
+.laravelArtwork .frontLayer {
+  left: 4%;
+  width: 69%;
+  height: 81%;
+  transform: rotate(3deg);
+}
+
+.editorBar {
+  height: 36px;
+  padding: 0 12px;
+  border-bottom: 1px solid rgb(255 255 255 / 7%);
+  background: #19211c;
+}
+
+.editorTab {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  border-bottom: 1px solid var(--project-accent);
+  color: #d8e3d5;
+}
+
+.editorBody {
+  display: flex;
+  height: 164px;
+  transform-origin: center;
+  transition: transform 300ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 300ms ease;
+}
+
+.fileRail {
+  display: flex;
+  width: 29%;
+  flex: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 13px 8px;
+  border-right: 1px solid rgb(255 255 255 / 7%);
+  color: #849287;
+  font-size: 8px;
+}
+
+.fileRail > span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  color: #a7b3a8;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+}
+
+.fileRail b {
+  font-weight: 400;
+}
+
+.fileRail small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activeFile {
+  color: #c4d4bd;
+}
+
+.codeLines {
+  min-width: 0;
+  flex: 1;
+  padding: 12px 8px;
+  overflow: hidden;
+  color: #c9d1c8;
+  font-size: 9px;
+  line-height: 1.85;
+}
+
+.codeLines p {
+  display: flex;
+  gap: 9px;
+  margin: 0;
+  white-space: pre;
+}
+
+.codeLines p > span:first-child {
+  width: 10px;
+  flex: none;
+  color: #617064;
+  text-align: right;
+}
+
+.codeLines code {
+  font-family: inherit;
+}
+
+.codeLines i {
+  color: #83b7a0;
+  font-style: normal;
+}
+
+.codeLines em {
+  color: #d4b775;
+  font-style: normal;
+}
+
+.codeLines b {
+  color: #b7cb85;
+  font-weight: 500;
+}
+
+.codeCaret {
+  display: inline-block;
+  width: 1px;
+  height: 11px;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: #a8c980;
+}
+
+.editorStatus {
+  display: flex;
+  height: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: #78877b;
+  font-size: 8px;
+  background: #1a241d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .singleCapture:hover {
+    z-index: 2;
+  }
+
+  .singleCapture:hover img {
+    transform: translateY(-5px) scale(1.025);
+    box-shadow: 0 15px 24px -12px rgb(0 0 0 / 90%);
+  }
+
+  .codeArtwork:hover .editorBody {
+    transform: perspective(700px) translateY(-3px) rotateX(1deg);
+    box-shadow: 0 14px 24px -20px color-mix(in oklch, var(--project-accent) 70%, transparent);
+  }
+
+  .layer:hover {
+    z-index: 3;
+    box-shadow: 0 20px 30px -13px rgb(0 0 0 / 95%);
+  }
+
+  .villarArtwork .backLayer:hover {
+    transform: rotate(4deg) translateY(-5px) scale(1.025);
+  }
+
+  .villarArtwork .frontLayer:hover {
+    transform: rotate(-3deg) translateY(-5px) scale(1.025);
+  }
+
+  .laravelArtwork .backLayer:hover {
+    transform: rotate(-4deg) translateY(-5px) scale(1.025);
+  }
+
+  .laravelArtwork .frontLayer:hover {
+    transform: rotate(3deg) translateY(-5px) scale(1.025);
+  }
+}
+
+@media (max-width: 640px) {
+  .artwork {
+    height: 208px;
+    margin-right: -0.2rem;
+    margin-left: -0.2rem;
+  }
+
+  .editorBody {
+    height: 140px;
+  }
+
+  .codeLines {
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax {
+    will-change: auto;
+  }
+
+  .card,
+  .singleCapture img,
+  .layer {
+    transition: none;
+  }
+}
