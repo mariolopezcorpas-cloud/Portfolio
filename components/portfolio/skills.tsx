@@ -75,7 +75,7 @@ export function Skills() {
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.percent}%` }}
-                      viewport={{ once: true, margin: "-60px" }}
+                      viewport={{ once: true, margin: "-60px 0px" }}
                       transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
                       className={`h-full rounded-full bg-gradient-to-r ${levelColor[skill.level]}`}
                     />

@@ -427,12 +427,16 @@
 
 @media (max-width: 640px) {
   .frameContent {
-    padding: 58px 12px 12px;
+    padding: 88px 12px 12px;
+  }
+
+  .stage {
+    translate: 0 124px;
   }
 
   .slide {
     width: 88vw;
-    scale: 0.82;
+    scale: 0.79;
   }
 
   .card {
@@ -451,6 +455,42 @@
 
   .codeLines {
     font-size: 8px;
+  }
+}
+
+@media (max-width: 340px) {
+  .heading h2 {
+    font-size: 24px;
+  }
+
+  .slide {
+    scale: 0.74;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1025px) {
+  .frameContent {
+    padding-top: 84px;
+  }
+
+  .stage {
+    translate: 0 82px;
+  }
+
+  .slide {
+    scale: 0.78;
+  }
+}
+
+:global(#experience .relative.mt-14 > .absolute) {
+  top: 36px;
+  height: calc(100% - 36px);
+}
+
+@media (min-width: 640px) {
+  :global(#experience .relative.mt-14 > .absolute) {
+    top: 44px;
+    height: calc(100% - 44px);
   }
 }
 

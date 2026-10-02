@@ -58,7 +58,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 font-mono text-xs text-foreground transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border px-3 py-2 font-mono text-xs text-foreground transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan md:min-h-0"
             aria-label={language === "en" ? "Cambiar idioma a español" : "Switch language to English"}
             title={language === "en" ? "Cambiar a español" : "Switch to English"}
           >
@@ -68,7 +68,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="text-foreground md:hidden"
+            className="flex size-11 items-center justify-center rounded-md text-foreground md:hidden"
             aria-label={
               language === "en"
                 ? open ? "Close menu" : "Open menu"
@@ -89,7 +89,7 @@ export function Navbar() {
                 <a
                   href={href}
                   onClick={() => setOpen(false)}
-                  className="block py-2 text-muted-foreground transition-colors hover:text-neon-cyan"
+                  className="block min-h-11 py-2 text-muted-foreground transition-colors hover:text-neon-cyan"
                 >
                   {content.nav[index]}
                 </a>

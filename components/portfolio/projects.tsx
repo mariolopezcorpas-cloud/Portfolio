@@ -78,6 +78,14 @@ const projectImages: Record<string, string[]> = {
   proyecto0616: ["/proyecto1.PNG", "/proyecto2.PNG"],
 }
 
+function getProjectDemoUrl(project: { slug: string; demo?: string }) {
+  if (project.slug === "personal-portfolio") {
+    return "https://portfolio-three-blond-ltyckkfvu9.vercel.app/"
+  }
+
+  return project.slug === "portafoli-m0614" ? undefined : project.demo
+}
+
 function ProjectArtwork({ slug, title }: { slug: string; title: string }) {
   const images = projectImages[slug] ?? []
 
@@ -203,18 +211,21 @@ export function Projects() {
             </div>
 
             <div ref={stageRef} className={styles.stage}>
-              {content.projects.map((project, i) => (
-                <ProjectSlide
-                  key={project.slug}
-                  index={i}
-                  activeIndex={activeIndex}
-                  stageWidth={stageWidth}
-                >
+              {content.projects.map((project, i) => {
+                const demoUrl = getProjectDemoUrl(project)
+
+                return (
+                  <ProjectSlide
+                    key={project.slug}
+                    index={i}
+                    activeIndex={activeIndex}
+                    stageWidth={stageWidth}
+                  >
               <article className={`${styles.card} group flex h-full flex-col rounded-2xl border border-border/70 bg-card/40 p-6`}>
                 <ProjectArtwork slug={project.slug} title={project.title} />
                 <div className="flex items-center justify-between">
                   <span className="mt-5 rounded-full border border-border/70 bg-secondary/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-                    {project.status}
+                    {project.slug === "villar-practicas" ? "completed" : project.status}
                   </span>
                   <div className="flex items-center gap-2">
                     <a
@@ -230,9 +241,9 @@ export function Projects() {
                     >
                       <GithubIcon className="size-5" />
                     </a>
-                    {project.demo ? (
+                    {demoUrl ? (
                       <a
-                        href={project.demo}
+                        href={demoUrl}
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`${project.title}: ${content.projectsCopy.demo}`}
@@ -282,8 +293,9 @@ export function Projects() {
                   </Button>
                 </div>
               </article>
-                </ProjectSlide>
-              ))}
+                  </ProjectSlide>
+                )
+              })}
             </div>
 
             <div className={styles.progress} aria-hidden="true">
